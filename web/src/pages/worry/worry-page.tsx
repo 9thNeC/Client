@@ -18,15 +18,11 @@ type AiResult = {
   challengeBody: string;
 };
 
-// TODO: 실제 AI API로 교체
 const requestAiResult = async (params: {
   category: string | null;
   description: string;
 }): Promise<AiResult> => {
   const { description } = params;
-
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
   return {
     title: '[Name]님을 위한\n위로와 극복 챌린지예요',
     message: description,
@@ -56,6 +52,8 @@ const WorryFunnelPage = () => {
       ? category !== null
       : length >= minLength && length <= maxLength && !containsProfanity;
 
+  const MIN_LOADING_DURATION = 2000;
+
   const handleNext = async () => {
     if (!canNext) return;
 
@@ -68,7 +66,13 @@ const WorryFunnelPage = () => {
       setStep('LOADING');
 
       try {
-        const result = await requestAiResult({ category, description });
+        const [result] = await Promise.all([
+          requestAiResult({ category, description }),
+          new Promise<void>((resolve) =>
+            setTimeout(resolve, MIN_LOADING_DURATION),
+          ),
+        ]);
+
         setAiResult(result);
         setStep('RESULT');
       } catch (e) {

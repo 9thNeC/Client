@@ -66,6 +66,16 @@
   }
 
   .animate-worry-gradient {
+    background:
+      linear-gradient(
+        137deg,
+        rgba(179, 209, 255, 0.4) 0%,
+        rgba(242, 245, 251, 0.4) 20%,
+        rgba(110, 161, 239, 0.3) 61%,
+        rgba(255, 255, 255, 0.5) 100%
+      ),
+      #fafafa;
+
     background-size: 200% 200%;
     animation: worry-gradient-move 2.2s ease-in-out infinite alternate;
   }
