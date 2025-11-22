@@ -4,11 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import mainMenu from '@/assets/main-menu.svg';
 import Button from '@/shared/components/button/button';
 import { cn } from '@/shared/libs/cn';
+import { useQuery } from '@tanstack/react-query';
+import { axiosClient } from '@/shared/apis/axios-client';
 
 const Main = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const navigate = useNavigate();
 
+  const { data: memberInfo } = useQuery({
+    queryKey: ['memberInfo'],
+    queryFn: () => axiosClient.get('/challenges').then((res) => res.data),
+  });
+
+  console.log(memberInfo);
   const categories = [
     { id: 1, title: '모든 고민' },
     { id: 2, title: '학업' },
