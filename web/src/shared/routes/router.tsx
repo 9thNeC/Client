@@ -7,6 +7,7 @@ const CardDetailPage = lazy(() => import('@pages/card/card-datail'));
 const LoginPage = lazy(() => import('@pages/login/login-page'));
 const SignupPage = lazy(() => import('@pages/signup/signup-page'));
 const WorryPage = lazy(() => import('@pages/worry/worry-page'));
+const RecordPage = lazy(() => import('@pages/record/record-page'));
 const MainPage = lazy(() => import('@pages/main/main-page'));
 
 export const router = createBrowserRouter([
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.WORRY,
         element: <WorryPage />,
+      },
+      {
+        path: ROUTES.RECORD,
+        element: <RecordPage />,
       },
       {
         path: ROUTES.CARD_DETAIL(),
