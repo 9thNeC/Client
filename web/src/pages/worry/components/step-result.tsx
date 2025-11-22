@@ -13,7 +13,7 @@ const StepResult = ({ result }: StepResultProps) => {
   const { title, message, challengeTitle, challengeBody } = result;
 
   return (
-    <section className="flex h-full flex-col gap-[2.4rem] pt-[1.6rem]">
+    <section className="flex h-full w-full flex-col gap-[2.4rem] pt-[1.6rem]">
       <div className="text-gray-90">
         <p className="b1 whitespace-pre-line">{title}</p>
       </div>

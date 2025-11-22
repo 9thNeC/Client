@@ -26,7 +26,6 @@ const requestAiResult = async (params: {
 }): Promise<AiResult> => {
   const { description } = params;
 
-  // 실제 API 연결 전까지는 그대로 사용
   return {
     title: '[Name]님을 위한\n위로와 극복 챌린지예요',
     message: description,
@@ -94,7 +93,6 @@ const WorryFunnelPage = () => {
     navigate(ROUTES.MAIN);
   };
 
-  // 헤더 뒤로가기 → 나가기 모달
   const handleBack = () => {
     setShowExitModal(true);
   };
@@ -118,12 +116,10 @@ const WorryFunnelPage = () => {
         isLoading && 'animate-worry-gradient',
       )}
     >
-      {/* 상단 헤더 (고민 털어놓기) */}
       <header className="header-layout">
-        {getHeaderContent(pathname, urlParams, handleBack)}
+        {!isLoading && getHeaderContent(pathname, urlParams, handleBack)}
       </header>
 
-      {/* 본문 영역 */}
       <main className="flex-col-between flex-1 px-[2.4rem] pt-[2.4rem] pb-[3.2rem]">
         {step === 'CATEGORY' && (
           <StepCategory
@@ -143,7 +139,7 @@ const WorryFunnelPage = () => {
         )}
 
         {step === 'LOADING' && (
-          <div className="text-gray-90 flex h-full flex-col justify-center">
+          <div className="flex h-full w-full flex-col gap-[2.4rem] pt-[7.4rem]">
             <p className="b1 whitespace-pre-line">
               {'[Name]님을 위한\n위로와 챌린지를 생각중이에요'}
             </p>
@@ -152,7 +148,6 @@ const WorryFunnelPage = () => {
 
         {step === 'RESULT' && aiResult && <StepResult result={aiResult} />}
 
-        {/* 하단 버튼 */}
         {(step === 'CATEGORY' || step === 'DESCRIPTION') && (
           <div className="w-full pt-[1rem]">
             <Button
@@ -179,7 +174,6 @@ const WorryFunnelPage = () => {
         )}
       </main>
 
-      {/* 나가기 모달 */}
       <Modal
         open={showExitModal}
         title="현재 페이지를 나가시겠어요?"
