@@ -1,12 +1,12 @@
 import leftIcon from '@icons/chevron-left.svg';
 import menuIcon from '@icons/menu.svg';
 import { ROUTES } from '@routes/routes-config';
-import { matchPath, type NavigateFunction } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
 
 export const getHeaderContent = (
   pathname: string,
   _urlParams: URLSearchParams,
-  navigate: NavigateFunction,
+  onBack: () => void,
 ) => {
   const isMain = matchPath(ROUTES.MAIN, pathname) !== null;
   const isCardDetail = matchPath(ROUTES.CARD_DETAIL(), pathname) !== null;
@@ -15,10 +15,6 @@ export const getHeaderContent = (
   if (!isMain && !isCardDetail && !isSignUp) {
     return null;
   }
-
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   if (isMain) {
     return (
@@ -48,7 +44,7 @@ export const getHeaderContent = (
         <div className="flex w-[2.8rem] justify-start">
           <button
             type="button"
-            onClick={handleBack}
+            onClick={onBack}
             aria-label="뒤로가기"
             className="flex h-[2.8rem] w-[2.8rem] cursor-pointer"
           >
