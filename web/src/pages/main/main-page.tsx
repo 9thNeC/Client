@@ -1,6 +1,6 @@
 import starsIcon from '@icons/stars.svg';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { axiosClient } from '@/shared/apis/axios-client';
@@ -19,7 +19,7 @@ const ENUM_TO_LABEL: Record<string, string> = {
   ETC: '기타',
 };
 
-const getCategoryLabel = (code?: string | null) => {
+const getCategoryLabel = (code?: string | 1) => {
   if (!code) return '전체';
   return ENUM_TO_LABEL[code] ?? '기타';
 };
@@ -32,7 +32,6 @@ const formatDate = (iso?: string | null) => {
 
 const Main = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
-  const [fixedNickname, setFixedNickname] = useState('닉네임'); // ✅ 한 번 세팅되면 계속 사용
   const navigate = useNavigate();
 
   // 순서/라벨 변경된 카테고리
@@ -63,13 +62,8 @@ const Main = () => {
         .then((res) => res.data),
   });
 
+  const nickname = challengesInfo?.data?.nickname ?? '닉네임';
   const cardItems = challengesInfo?.data?.challenges ?? [];
-
-  useEffect(() => {
-    if (challengesInfo?.data?.nickname) {
-      setFixedNickname(challengesInfo.data.nickname);
-    }
-  }, [challengesInfo?.data?.nickname]);
 
   console.log(challengesInfo?.data);
 
@@ -84,7 +78,7 @@ const Main = () => {
 
         <div className="flex flex-col pb-[3.2rem]">
           <div className="pl-[2.4rem] text-[2.4rem] text-white">
-            {`${fixedNickname}님,`}
+            {`${nickname}님,`}
           </div>
           <div className="pl-[2.4rem] text-[2.4rem] text-white">
             가볍게 털고 가요.
@@ -130,14 +124,14 @@ const Main = () => {
                 className="border-gray-10 h-[24rem] w-[19rem] rounded-[1.6rem] border-[1px] bg-white p-[1.6rem] text-[1.6rem]"
               >
                 <div className="flex-col-between h-full">
-                  <div className="b3 text-blue-60 w-full text-left">
+                  <div className="text-blue-60 w-full text-left">
                     #{getCategoryLabel(item.category)}
                   </div>
 
-                  <div className="h2 text-gray-60">{item.title}</div>
+                  <div className="text-gray-60 text-[2.0rem]">{item.title}</div>
 
                   <div className="flex-row-end w-full text-right">
-                    <div className="b3 text-gray-40">
+                    <div className="text-gray-40 text-[1.2rem]">
                       {formatDate(item.createdAt)}
                     </div>
                   </div>
