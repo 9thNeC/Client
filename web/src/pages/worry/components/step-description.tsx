@@ -1,6 +1,7 @@
+import { PROFANITY_LIST } from '@pages/worry/worry-page';
+import { useEffect, useRef } from 'react';
+
 type StepDescriptionProps = {
-  name: string;
-  category: string | null;
   value: string;
   onChange: (next: string) => void;
   minLength: number;
@@ -8,65 +9,76 @@ type StepDescriptionProps = {
 };
 
 const StepDescription = ({
-  name,
-  category,
   value,
   onChange,
   minLength,
   maxLength,
 }: StepDescriptionProps) => {
   const length = value.length;
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const containsProfanity = PROFANITY_LIST.some((bad) => value.includes(bad));
+
   const isTooShort = length > 0 && length < minLength;
-  const isTooLong = length > maxLength;
-  const isValid = length >= minLength && length <= maxLength;
-
-  let counterColor = 'text-gray-40';
-
-  if (isTooShort || isTooLong) {
-    counterColor = 'text-red-50';
-  } else if (isValid) {
-    counterColor = 'text-green-50';
-  }
+  const isFull = length === maxLength;
 
   let helperText = '';
+  let helperColor = 'text-gray-90';
 
-  if (length > 0) {
-    if (isTooShort) {
-      helperText = `최소 ${minLength}자 이상 입력해주세요`;
-    } else if (isTooLong) {
-      helperText = `${maxLength}자 이내로 작성해주세요`;
-    } else if (isValid) {
-      helperText = '좋아요, 충분히 자세하게 작성해주셨어요';
-    }
+  if (containsProfanity) {
+    helperText = '욕설, 비속어는 사용할 수 없어요';
+    helperColor = 'text-error';
   }
 
+  let counterColor = 'text-gray-90';
+
+  if (containsProfanity || isTooShort) {
+    counterColor = 'text-error';
+  } else if (isFull) {
+    counterColor = 'text-success';
+  }
+
+  const autoResize = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  };
+
+  useEffect(() => {
+    autoResize();
+  }, [value]);
+
+  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    onChange(e.target.value);
+    autoResize();
+  };
+
   return (
-    <section className="flex flex-col gap-[1.6rem]">
-      <div className="flex flex-col gap-[0.4rem]">
-        <h1 className="h2">어떤 고민을 가지고 있는지 알려주세요!</h1>
-        <p className="b3 text-gray-70">
-          {name}님의 고민을 잘 이해할 수 있도록
+    <section className="w-full flex-col gap-[1.6rem]">
+      <div className="text-gray-90 flex-col gap-[0.8rem]">
+        <h1 className="h3">어떤 고민을 가지고 있는지 알려주세요!</h1>
+        <p className="b2">
+          [서비스명]이 위로와 함께
           <br />
-          이름 등 개인을 특정할 정보는 제외해주세요
+          이를 극복할 재밌는 챌린지를 제안할게요
         </p>
-        {category && (
-          <p className="b3 text-blue-60 mt-[0.4rem]">[{category}] 카테고리</p>
-        )}
       </div>
 
-      <div className="flex flex-col gap-[0.8rem]">
+      <div className="flex-col gap-[0.8rem]">
         <textarea
+          ref={textareaRef}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           maxLength={maxLength}
-          className="border-gray-20 text-b3 text-gray-90 h-[24rem] w-full resize-none rounded-[16px] border bg-white p-[1.6rem] outline-none"
+          className="b3 text-gray-90 border-gray-10 placeholder:text-gray-40 h-auto min-h-[24rem] w-full resize-none overflow-y-hidden rounded-[16px] border bg-white p-[2rem] outline-none"
           placeholder="고민을 입력해주세요."
         />
 
-        <div className="flex items-center justify-between">
-          <p className={`b3 ${counterColor}`}>{helperText}</p>
+        <div className="flex-row-between">
+          <p className={`b3 ${helperColor}`}>{helperText}</p>
           <p className={`b3 ${counterColor}`}>
-            {length}/{maxLength}
+            {length}/{maxLength}자
           </p>
         </div>
       </div>
