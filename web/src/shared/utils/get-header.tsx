@@ -10,8 +10,9 @@ export const getHeaderContent = (
   const isCardDetail = matchPath(ROUTES.CARD_DETAIL(), pathname) !== null;
   const isSignUp = matchPath(ROUTES.SIGNUP, pathname) !== null;
   const isWorry = matchPath(ROUTES.WORRY, pathname) !== null;
+  const isRecord = matchPath(ROUTES.RECORD, pathname) !== null;
 
-  if (!isCardDetail && !isSignUp && !isWorry) {
+  if (!isCardDetail && !isSignUp && !isWorry && !isRecord) {
     return null;
   }
 

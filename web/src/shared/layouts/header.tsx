@@ -15,8 +15,9 @@ const Header = () => {
   const isMain = matchPath(ROUTES.MAIN, pathname) !== null;
   const isSignUp = matchPath(ROUTES.SIGNUP, pathname) !== null;
   const isWorry = matchPath(ROUTES.WORRY, pathname) !== null;
+  const isRecord = matchPath(ROUTES.RECORD, pathname) !== null;
 
-  if (isLogin || isWorry) {
+  if (isLogin || isWorry || isRecord) {
     return null;
   }
 

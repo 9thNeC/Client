@@ -1,11 +1,14 @@
 import Button from '@components/button/button';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import SmallButton from '@/shared/components/button/small-button';
+import { ROUTES } from '@/shared/routes/routes-config';
 
 const CardDetail = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
 
   const handleSelectImageClick = () => {
     if (!previewUrl) {
@@ -41,7 +44,16 @@ const CardDetail = () => {
       />
 
       <div className="flex justify-end pb-[1.2rem]">
-        <SmallButton title="고민 보러가기" />
+        <SmallButton
+          onClick={() =>
+            navigate(ROUTES.RECORD, {
+              state: {
+                value: 'd',
+              },
+            })
+          }
+          title="고민 보러가기"
+        />
       </div>
 
       <section className="relative h-[56rem] overflow-hidden rounded-[16px] shadow-[0_0_16px_rgba(51,124,233,0.10)]">
