@@ -12,6 +12,7 @@ type SmallButtonProps = Omit<
 const SmallButton = ({
   className = 'bg-gray-10 text-black',
   title,
+  ...rest
 }: SmallButtonProps) => {
   const baseClass =
     'flex-row-center cursor-pointer ' +
@@ -19,7 +20,7 @@ const SmallButton = ({
     'disabled:cursor-default';
 
   return (
-    <button type="button" className={cn(baseClass, className)}>
+    <button type="button" className={cn(baseClass, className)} {...rest}>
       <span className="b1">{title}</span>
     </button>
   );

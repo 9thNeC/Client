@@ -1,13 +1,15 @@
 import Button from '@components/button/button';
+import Modal from '@components/modal/modal';
 import { cn } from '@libs/cn';
 import StepCategory from '@pages/worry/components/step-category';
 import StepDescription from '@pages/worry/components/step-description';
 import StepResult from '@pages/worry/components/step-result';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { PROFANITY_LIST } from '@/shared/constants/badwords';
 import { ROUTES } from '@/shared/routes/routes-config';
+import { getHeaderContent } from '@/shared/utils/get-header';
 
 type FunnelStep = 'CATEGORY' | 'DESCRIPTION' | 'LOADING' | 'RESULT';
 
@@ -23,6 +25,8 @@ const requestAiResult = async (params: {
   description: string;
 }): Promise<AiResult> => {
   const { description } = params;
+
+  // 실제 API 연결 전까지는 그대로 사용
   return {
     title: '[Name]님을 위한\n위로와 극복 챌린지예요',
     message: description,
@@ -32,12 +36,18 @@ const requestAiResult = async (params: {
   };
 };
 
+const MIN_LOADING_DURATION = 2000;
+
 const WorryFunnelPage = () => {
   const [step, setStep] = useState<FunnelStep>('CATEGORY');
   const [category, setCategory] = useState<string | null>(null);
   const [description, setDescription] = useState('');
   const [aiResult, setAiResult] = useState<AiResult | null>(null);
+  const [showExitModal, setShowExitModal] = useState(false);
+
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const urlParams = new URLSearchParams(search);
 
   const maxLength = 400;
   const minLength = 10;
@@ -51,8 +61,6 @@ const WorryFunnelPage = () => {
     step === 'CATEGORY'
       ? category !== null
       : length >= minLength && length <= maxLength && !containsProfanity;
-
-  const MIN_LOADING_DURATION = 2000;
 
   const handleNext = async () => {
     if (!canNext) return;
@@ -86,67 +94,101 @@ const WorryFunnelPage = () => {
     navigate(ROUTES.MAIN);
   };
 
+  // 헤더 뒤로가기 → 나가기 모달
+  const handleBack = () => {
+    setShowExitModal(true);
+  };
+
+  const handleExitConfirm = () => {
+    setShowExitModal(false);
+    navigate(ROUTES.MAIN);
+  };
+
+  const handleExitCancel = () => {
+    setShowExitModal(false);
+  };
+
   const isLoading = step === 'LOADING';
 
   return (
     <div
       className={cn(
-        'flex-col-between h-svh px-[2.4rem] pt-[2.4rem] pb-[3.2rem]',
+        'flex h-svh flex-col',
         'bg-worry-funnel',
         isLoading && 'animate-worry-gradient',
       )}
     >
-      {step === 'CATEGORY' && (
-        <StepCategory
-          name="Name님"
-          selectedCategory={category}
-          onSelectCategory={setCategory}
-        />
-      )}
+      {/* 상단 헤더 (고민 털어놓기) */}
+      <header className="header-layout">
+        {getHeaderContent(pathname, urlParams, handleBack)}
+      </header>
 
-      {step === 'DESCRIPTION' && (
-        <StepDescription
-          value={description}
-          onChange={setDescription}
-          minLength={minLength}
-          maxLength={maxLength}
-        />
-      )}
-
-      {step === 'LOADING' && (
-        <div className="text-gray-90 flex h-full flex-col justify-center">
-          <p className="b1 whitespace-pre-line">
-            {'[Name]님을 위한\n위로와 챌린지를 생각중이에요'}
-          </p>
-        </div>
-      )}
-
-      {step === 'RESULT' && aiResult && <StepResult result={aiResult} />}
-
-      {(step === 'CATEGORY' || step === 'DESCRIPTION') && (
-        <div className="w-full pt-[1rem]">
-          <Button
-            title="다음"
-            disabled={!canNext}
-            className={
-              canNext
-                ? 'bg-blue-80 text-white'
-                : 'bg-gray-20 text-gray-40 cursor-default'
-            }
-            onClick={handleNext}
+      {/* 본문 영역 */}
+      <main className="flex-col-between flex-1 px-[2.4rem] pt-[2.4rem] pb-[3.2rem]">
+        {step === 'CATEGORY' && (
+          <StepCategory
+            name="Name님"
+            selectedCategory={category}
+            onSelectCategory={setCategory}
           />
-        </div>
-      )}
+        )}
 
-      {step === 'RESULT' && (
-        <div className="w-full pt-[1rem]">
-          <Button
-            title="메인으로"
-            className="bg-blue-80 text-white"
-            onClick={handleGoMain}
+        {step === 'DESCRIPTION' && (
+          <StepDescription
+            value={description}
+            onChange={setDescription}
+            minLength={minLength}
+            maxLength={maxLength}
           />
-        </div>
-      )}
+        )}
+
+        {step === 'LOADING' && (
+          <div className="text-gray-90 flex h-full flex-col justify-center">
+            <p className="b1 whitespace-pre-line">
+              {'[Name]님을 위한\n위로와 챌린지를 생각중이에요'}
+            </p>
+          </div>
+        )}
+
+        {step === 'RESULT' && aiResult && <StepResult result={aiResult} />}
+
+        {/* 하단 버튼 */}
+        {(step === 'CATEGORY' || step === 'DESCRIPTION') && (
+          <div className="w-full pt-[1rem]">
+            <Button
+              title="다음"
+              disabled={!canNext}
+              className={
+                canNext
+                  ? 'bg-blue-80 text-white'
+                  : 'bg-gray-20 text-gray-40 cursor-default'
+              }
+              onClick={handleNext}
+            />
+          </div>
+        )}
+
+        {step === 'RESULT' && (
+          <div className="w-full pt-[1rem]">
+            <Button
+              title="메인으로"
+              className="bg-blue-80 text-white"
+              onClick={handleGoMain}
+            />
+          </div>
+        )}
+      </main>
+
+      {/* 나가기 모달 */}
+      <Modal
+        open={showExitModal}
+        title="현재 페이지를 나가시겠어요?"
+        description="지금 나가면 작성한 내용은 저장되지 않아요"
+        confirmText="나가기"
+        cancelText="계속 작성하기"
+        onConfirm={handleExitConfirm}
+        onCancel={handleExitCancel}
+      />
     </div>
   );
 };

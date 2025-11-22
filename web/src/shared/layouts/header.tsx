@@ -14,13 +14,14 @@ const Header = () => {
   const isLogin = matchPath(ROUTES.LOGIN, pathname) !== null;
   const isMain = matchPath(ROUTES.MAIN, pathname) !== null;
   const isSignUp = matchPath(ROUTES.SIGNUP, pathname) !== null;
+  const isWorry = matchPath(ROUTES.WORRY, pathname) !== null;
 
-  if (isLogin) {
+  if (isLogin || isWorry) {
     return null;
   }
 
   const handleBack = () => {
-    if (isSignUp) {
+    if (isSignUp || isWorry) {
       setShowExitModal(true);
       return;
     }
@@ -30,7 +31,18 @@ const Header = () => {
 
   const handleExitConfirm = () => {
     setShowExitModal(false);
-    navigate('/login');
+
+    if (isSignUp) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+
+    if (isWorry) {
+      navigate(ROUTES.MAIN);
+      return;
+    }
+
+    navigate(-1);
   };
 
   const handleExitCancel = () => {
@@ -44,7 +56,7 @@ const Header = () => {
       </header>
 
       <Modal
-        open={isSignUp && showExitModal}
+        open={(isSignUp || isWorry) && showExitModal}
         title="현재 페이지를 나가시겠어요?"
         description="지금 나가면 작성한 내용은 저장되지 않아요"
         confirmText="나가기"
