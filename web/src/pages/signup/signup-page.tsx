@@ -1,8 +1,6 @@
 import Button from '@components/button/button';
-import Input from '@pages/signup/components/input';
+import Input, { type NicknameStatus } from '@pages/signup/components/input';
 import { useMemo, useState } from 'react';
-
-type NicknameStatus = 'default' | 'error' | 'success';
 
 const Signup = () => {
   const [nickname, setNickname] = useState('');
@@ -37,7 +35,7 @@ const Signup = () => {
 
   const isValid = status === 'success';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!touched) setTouched(true);
     setNickname(e.target.value);
   };
@@ -48,12 +46,19 @@ const Signup = () => {
 
   const handleNext = () => {
     if (!isValid) return;
-    // TODO: 다음 퍼널 단계로 이동 로직
+    // TODO: 다음 퍼널 단계로 이동
   };
 
   return (
-    <div className="bg-gray-5 flex min-h-dvh flex-col px-[2.4rem] pt-[3.2rem] pb-[3.2rem]">
-      <section className="flex flex-1 flex-col">
+    <div className="bg-gray-5 flex-col-between h-svh px-[2.4rem] pt-[3.2rem] pb-[9rem]">
+      <section className="w-full flex-col gap-[3.6rem]">
+        <div className="flex-col gap-[0.4rem]">
+          <h1 className="h2">어떤 닉네임으로 불러드릴까요?</h1>
+          <p className="b3 text-blue-60">
+            2-7자의 한글, 영문, 숫자만 사용할 수 있어요
+          </p>
+        </div>
+
         <Input
           value={nickname}
           status={status}
@@ -63,7 +68,7 @@ const Signup = () => {
         />
       </section>
 
-      <div className="mt-[2.4rem]">
+      <div className="w-full">
         <Button
           title="다음"
           className={

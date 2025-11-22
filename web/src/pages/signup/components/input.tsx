@@ -1,7 +1,7 @@
 import { cn } from '@libs/cn';
 import type { ChangeEvent, FocusEvent, InputHTMLAttributes } from 'react';
 
-type NicknameStatus = 'default' | 'error' | 'success';
+export type NicknameStatus = 'default' | 'error' | 'success';
 
 type NicknameInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -14,7 +14,7 @@ type NicknameInputProps = Omit<
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
 };
 
-const NicknameInput = ({
+const Input = ({
   value,
   status,
   helperText,
@@ -23,31 +23,21 @@ const NicknameInput = ({
   ...rest
 }: NicknameInputProps) => {
   const inputBase =
-    'mt-[1.6rem] h-[5.2rem] w-full rounded-[14px] border px-[1.6rem] ' +
-    'bg-gray-5 text-gray-90 placeholder:text-gray-40 ' +
-    'focus:outline-none';
+    'h-[5.2rem] w-full rounded-[16px] border px-[2rem] ' +
+    'bg-white text-gray-90 placeholder:text-gray-50 ' +
+    'focus:outline-none b3';
 
-  const borderClass =
-    status === 'error'
-      ? 'border-red-50'
-      : status === 'success'
-        ? 'border-blue-40'
-        : 'border-gray-20';
+  const borderClass = 'border-gray-10';
 
-  const helperColor =
-    status === 'error'
-      ? 'text-red-50'
-      : status === 'success'
-        ? 'text-green-50'
-        : 'text-gray-40';
+  let helperColor = 'text-gray-40';
+  if (status === 'error') {
+    helperColor = 'text-error';
+  } else if (status === 'success') {
+    helperColor = 'text-success';
+  }
 
   return (
     <div className="flex flex-col">
-      <h1 className="h1">어떤 닉네임으로 불러드릴까요?</h1>
-      <p className="b3 text-blue-60 mt-[0.4rem]">
-        2-7자의 한글, 영문, 숫자만 사용할 수 있어요
-      </p>
-
       <input
         value={value}
         onChange={onChange}
@@ -58,10 +48,12 @@ const NicknameInput = ({
       />
 
       {helperText && status !== 'default' && (
-        <p className={cn('b3 mt-[0.8rem]', helperColor)}>{helperText}</p>
+        <p className={cn('b4 mt-[0.8rem] pl-[0.7rem]', helperColor)}>
+          {helperText}
+        </p>
       )}
     </div>
   );
 };
 
-export default NicknameInput;
+export default Input;

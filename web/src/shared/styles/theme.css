@@ -12,7 +12,9 @@
   --color-blue-100: #002661;
 
   /* Etc */
-  --color-overlay: rgba(0, 0, 0, 0.2);
+  --color-error: #f83737;
+  --color-success: #57bf27;
+  --color-background: #fafafa;
 
   /* Grayscale */
   --color-gray-10: #e6e7e9;
@@ -79,7 +81,7 @@
     line-height: 160%;
     letter-spacing: 0rem;
   }
-  .b3 {
+  .b4 {
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 160%;
