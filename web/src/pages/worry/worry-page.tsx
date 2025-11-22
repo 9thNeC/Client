@@ -6,9 +6,8 @@ import StepResult from '@pages/worry/components/step-result';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { PROFANITY_LIST } from '@/shared/constants/badwords';
 import { ROUTES } from '@/shared/routes/routes-config';
-
-export const PROFANITY_LIST = ['나쁜말1', '나쁜말2'];
 
 type FunnelStep = 'CATEGORY' | 'DESCRIPTION' | 'LOADING' | 'RESULT';
 

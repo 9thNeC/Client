@@ -1,5 +1,6 @@
-import { PROFANITY_LIST } from '@pages/worry/worry-page';
 import { useEffect, useRef } from 'react';
+
+import { PROFANITY_LIST } from '@/shared/constants/badwords';
 
 type StepDescriptionProps = {
   value: string;
