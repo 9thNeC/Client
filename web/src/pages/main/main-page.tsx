@@ -1,63 +1,97 @@
-import { useState } from 'react';
+import starsIcon from '@icons/stars.svg';
+import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import mainMenu from '@/assets/main-menu.svg';
+import { axiosClient } from '@/shared/apis/axios-client';
 import Button from '@/shared/components/button/button';
 import { cn } from '@/shared/libs/cn';
-import { useQuery } from '@tanstack/react-query';
-import { axiosClient } from '@/shared/apis/axios-client';
 import { ChallengeListType } from '@/shared/types/challenge-list-type';
+
+const ENUM_TO_LABEL: Record<string, string> = {
+  STUDY: '학업',
+  JOB: '직장',
+  FAMILY: '가족',
+  CAREER: '진로',
+  HEALTH: '건강',
+  RELATION: '관계',
+  FINANCE: '경제',
+  ETC: '기타',
+};
+
+const getCategoryLabel = (code?: string | null) => {
+  if (!code) return '전체';
+  return ENUM_TO_LABEL[code] ?? '기타';
+};
+
+const formatDate = (iso?: string | null) => {
+  if (!iso) return '';
+  const base = iso.slice(0, 10);
+  return base.split('-').join('.');
+};
 
 const Main = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
+  const [fixedNickname, setFixedNickname] = useState('닉네임'); // ✅ 한 번 세팅되면 계속 사용
   const navigate = useNavigate();
 
+  // 순서/라벨 변경된 카테고리
+  const categories = [
+    { id: 1, title: '전체', enumValue: null as string | null },
+    { id: 2, title: '학업', enumValue: 'STUDY' },
+    { id: 3, title: '직장', enumValue: 'JOB' },
+    { id: 4, title: '가족', enumValue: 'FAMILY' },
+    { id: 5, title: '진로', enumValue: 'CAREER' },
+    { id: 6, title: '건강', enumValue: 'HEALTH' },
+    { id: 7, title: '관계', enumValue: 'RELATION' },
+    { id: 8, title: '경제', enumValue: 'FINANCE' },
+    { id: 9, title: '기타', enumValue: 'ETC' },
+  ];
+
+  const selectedCategoryEnum =
+    categories.find((c) => c.id === activeCategory)?.enumValue ?? null;
+
   const { data: challengesInfo } = useQuery({
-    queryKey: ['challengesInfo'],
+    queryKey: ['challengesInfo', selectedCategoryEnum],
     queryFn: () =>
-      axiosClient.get<ChallengeListType>('/challenges').then((res) => res.data),
+      axiosClient
+        .get<ChallengeListType>('/challenges', {
+          params: selectedCategoryEnum
+            ? { category: selectedCategoryEnum }
+            : {},
+        })
+        .then((res) => res.data),
   });
+
+  const cardItems = challengesInfo?.data?.challenges ?? [];
+
+  useEffect(() => {
+    if (challengesInfo?.data?.nickname) {
+      setFixedNickname(challengesInfo.data.nickname);
+    }
+  }, [challengesInfo?.data?.nickname]);
+
   console.log(challengesInfo?.data);
 
-  const categories = [
-    { id: 1, title: '모든 고민' },
-    { id: 2, title: '학업' },
-    { id: 3, title: '관계' },
-    { id: 4, title: '직장' },
-    { id: 5, title: '진로' },
-    { id: 6, title: '건강' },
-    { id: 7, title: '경제' },
-    { id: 8, title: '기타' },
-  ];
-
-  const cardItems = [
-    { id: 1, title: '학업' },
-    { id: 2, title: '학업' },
-    { id: 3, title: '학업' },
-    { id: 4, title: '학업' },
-  ];
-
   return (
-    <div className="flex h-[100vh] flex-col">
-      {/* 상단 영역 */}
-      <div className="h-[29.4rem] w-full bg-[linear-gradient(180deg,#001536_0%,#00317E_100%)]">
-        <div className="mb-[3.4rem] flex justify-between px-[2.4rem] py-[1.3rem]">
+    <div className="flex min-h-svh flex-col">
+      <div className="h-[30rem] w-full bg-[linear-gradient(180deg,#001536_0%,#00317E_100%)]">
+        <div className="flex justify-between px-[2.4rem] py-[1.3rem] pb-[3.4rem]">
           <div>
             <div className="h2 text-blue-60">서비스 명</div>
           </div>
-          <img src={mainMenu} alt="Image not found" />
         </div>
 
-        <div className="mb-[3.2rem] flex flex-col">
+        <div className="flex flex-col pb-[3.2rem]">
           <div className="pl-[2.4rem] text-[2.4rem] text-white">
-            {'{닉네임님},'}
+            {`${fixedNickname}님,`}
           </div>
           <div className="pl-[2.4rem] text-[2.4rem] text-white">
-            가볍게 털고 가요. 무해한걸로요!
+            가볍게 털고 가요.
           </div>
         </div>
 
-        <div className="mb-[2.4rem] px-[2.4rem]">
+        <div className="px-[2.4rem] pb-[2.4rem]">
           <Button
             title="무해한 위로/챌린지 받기"
             className="bg-blue-80 text-[2.0rem] text-white"
@@ -66,53 +100,47 @@ const Main = () => {
         </div>
       </div>
 
-      {/* 카드 영역 */}
-      <div className="mt-[2.4rem] flex h-full flex-col bg-[#FAFAFA]">
-        {/* 카테고리 스크롤 영역 */}
-        <div className="scrollbar-hide mb-[1.6rem] flex flex-row gap-[0.8rem] overflow-x-auto pl-[2.4rem] text-[1.6rem]">
+      <div className="mt-[2.4rem] flex flex-1 flex-col bg-[#FAFAFA]">
+        <div className="scrollbar-hide flex gap-[0.8rem] overflow-x-auto pb-[1.6rem] pl-[2.4rem] text-[1.6rem]">
           {categories.map((category) => (
             <Button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
               title={category.title}
               className={cn(
-                'border-gray-10 rounded-[0.6rem] border-[1px] px-[1.6rem] py-[0.8rem] whitespace-nowrap',
+                'rounded-[6px] px-[1.6rem] py-[0.8rem] whitespace-nowrap',
                 activeCategory === category.id
-                  ? 'bg-blue-20 text-white'
-                  : 'text-gray-40 bg-white',
+                  ? 'bg-blue-60 text-white'
+                  : 'border-gray-10 border bg-white text-gray-50',
               )}
             />
           ))}
         </div>
 
-        {/* 카드 리스트 / 비었을 때 */}
         {cardItems.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center">
-            <div className="text-center text-[2.5rem]">
-              텅~ 비었어요
-              <br />
-              <br />
-              무해하게 털어놓고 가요!
-            </div>
+          <div className="flex-col-center flex-1 gap-[1.6rem]">
+            <img src={starsIcon} className="w-[9.6rem]" />
+            <p className="b1 text-center text-gray-50">텅 비었어요</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-[1.2rem] px-[2.4rem]">
+          <div className="grid grid-cols-2 gap-[1.2rem] px-[2.4rem] pb-[2.4rem]">
             {cardItems.map((item) => (
               <div
                 key={item.id}
                 className="border-gray-10 h-[24rem] w-[19rem] rounded-[1.6rem] border-[1px] bg-white p-[1.6rem] text-[1.6rem]"
               >
-                <div className="text-blue-60">
-                  <div>#{item.title}</div>
-                </div>
+                <div className="flex-col-between h-full">
+                  <div className="b3 text-blue-60 w-full text-left">
+                    #{getCategoryLabel(item.category)}
+                  </div>
 
-                <div className="text-gray-60 flex flex-col justify-center px-[3rem] py-[4rem] text-[2.4rem]">
-                  <div>와작 와작</div>
-                  <div>과자 먹기</div>
-                </div>
+                  <div className="h2 text-gray-60">{item.title}</div>
 
-                <div className="flex flex-row justify-end">
-                  <div className="text-gray-40">2025.10.15</div>
+                  <div className="flex-row-end w-full text-right">
+                    <div className="b3 text-gray-40">
+                      {formatDate(item.createdAt)}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
