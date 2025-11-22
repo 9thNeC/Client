@@ -48,4 +48,8 @@
   .flex-col-items-end {
     @apply flex flex-col items-end;
   }
+
+  .header-layout {
+    @apply sticky top-0 z-[var(--z-header)] h-[5.6rem] py-[1.55rem] pl-[2rem];
+  }
 }
