@@ -1,62 +1,70 @@
+import companyIcon from '@icons/category-company.svg';
+import dreamIcon from '@icons/category-dream.svg';
+import etcIcon from '@icons/category-etc.svg';
+import familyIcon from '@icons/category-family.svg';
+import healthIcon from '@icons/category-health.svg';
+import moneyIcon from '@icons/category-money.svg';
+import pencilIcon from '@icons/category-pencil.svg';
+import relationIcon from '@icons/category-relation.svg';
+
 type StepCategoryProps = {
   name: string;
   selectedCategory: string | null;
   onSelectCategory: (category: string) => void;
-  onRequestExit: () => void;
 };
 
-const CATEGORIES = [
-  '학업',
-  '직장',
-  '가족',
-  '진로',
-  '건강',
-  '관계',
-  '경제',
-  '기타',
-];
+const CATEGORY_ITEMS = [
+  { label: '학업', icon: pencilIcon },
+  { label: '직장', icon: companyIcon },
+  { label: '가족', icon: familyIcon },
+  { label: '진로', icon: dreamIcon },
+  { label: '건강', icon: healthIcon },
+  { label: '관계', icon: relationIcon },
+  { label: '경제', icon: moneyIcon },
+  { label: '기타', icon: etcIcon },
+] as const;
 
 const StepCategory = ({
   name,
   selectedCategory,
   onSelectCategory,
-  onRequestExit,
 }: StepCategoryProps) => {
   return (
-    <section className="flex flex-col gap-[2.4rem]">
-      <div className="flex flex-col gap-[0.4rem]">
-        <h1 className="h2">
-          {name}이 가지고 계신 고민의
-          <br />
-          카테고리를 선택해주세요!
-        </h1>
-        <p className="b3 text-gray-70">카테고리는 한 가지만 선택할 수 있어요</p>
-      </div>
+    <section className="w-full flex-col gap-[3.2rem]">
+      <h1 className="h3">
+        {name}이 가지고 계신 고민의
+        <br />
+        카테고리를 선택해주세요!
+      </h1>
 
-      <div className="grid grid-cols-3 gap-[0.8rem]">
-        {CATEGORIES.map((category) => {
-          const isActive = selectedCategory === category;
+      <div className="grid w-full grid-cols-3 gap-[1.0rem]">
+        {CATEGORY_ITEMS.map(({ label, icon }) => {
+          const isActive = selectedCategory === label;
 
           return (
             <button
-              key={category}
+              key={label}
               type="button"
-              onClick={() => onSelectCategory(category)}
+              onClick={() => onSelectCategory(label)}
               className={
-                'h-[4.8rem] rounded-[16px] border text-center ' +
+                'flex-col-center b1 gap-[1rem] rounded-[8px] border px-[1.6rem] pt-[1.6rem] pb-[1rem] text-black ' +
                 (isActive
-                  ? 'border-blue-60 bg-blue-5 text-blue-80'
-                  : 'border-gray-20 text-gray-90 bg-white')
+                  ? 'bg-blue-10 border-blue-50'
+                  : 'border-gray-10 bg-white')
               }
             >
-              <span className="b2">{category}</span>
+              <div className="flex-col-center gap-[1rem]">
+                <img
+                  src={icon}
+                  alt={`${label} 아이콘`}
+                  className="h-[2.4rem] w-auto"
+                />
+                <span className="b1">{label}</span>
+              </div>
             </button>
           );
         })}
       </div>
-
-      {/* 헤더 뒤로가기 대신 쓸 수 있는 나가기 버튼이 필요하면 여기서 사용 */}
-      {/* <button type="button" onClick={onRequestExit}>나가기</button> */}
     </section>
   );
 };

@@ -20,21 +20,25 @@ const StepDescription = ({
   const isTooLong = length > maxLength;
   const isValid = length >= minLength && length <= maxLength;
 
-  const counterColor =
-    isTooShort || isTooLong
-      ? 'text-red-50'
-      : isValid
-        ? 'text-green-50'
-        : 'text-gray-40';
+  let counterColor = 'text-gray-40';
 
-  const helperText =
-    length === 0
-      ? ''
-      : isTooShort
-        ? `최소 ${minLength}자 이상 입력해주세요`
-        : isTooLong
-          ? `${maxLength}자 이내로 작성해주세요`
-          : '좋아요, 충분히 자세하게 작성해주셨어요';
+  if (isTooShort || isTooLong) {
+    counterColor = 'text-red-50';
+  } else if (isValid) {
+    counterColor = 'text-green-50';
+  }
+
+  let helperText = '';
+
+  if (length > 0) {
+    if (isTooShort) {
+      helperText = `최소 ${minLength}자 이상 입력해주세요`;
+    } else if (isTooLong) {
+      helperText = `${maxLength}자 이내로 작성해주세요`;
+    } else if (isValid) {
+      helperText = '좋아요, 충분히 자세하게 작성해주셨어요';
+    }
+  }
 
   return (
     <section className="flex flex-col gap-[1.6rem]">
