@@ -1,4 +1,4 @@
-import ChallengePostit from './challenge-postit';
+import ChallengePostit from '@pages/worry/components/challenge-postit';
 
 type StepResultProps = {
   result: {
