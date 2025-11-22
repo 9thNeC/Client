@@ -1,7 +1,7 @@
 import { cn } from '@libs/cn';
 import type { ButtonHTMLAttributes } from 'react';
 
-type ButtonProps = Omit<
+type SmallButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'children' | 'title'
 > & {
@@ -9,17 +9,20 @@ type ButtonProps = Omit<
   title: string;
 };
 
-const Button = ({ className = '', title, ...rest }: ButtonProps) => {
+const SmallButton = ({
+  className = 'bg-gray-10 text-black',
+  title,
+}: SmallButtonProps) => {
   const baseClass =
     'flex-row-center cursor-pointer ' +
-    'py-[1.6rem] w-full rounded-[16px] ' +
+    'px-[1.6rem] py-[1.2rem] rounded-[16px] ' +
     'disabled:cursor-default';
 
   return (
-    <button type="button" className={cn(baseClass, className)} {...rest}>
-      <span className="h3">{title}</span>
+    <button type="button" className={cn(baseClass, className)}>
+      <span className="b1">{title}</span>
     </button>
   );
 };
 
-export default Button;
+export default SmallButton;
