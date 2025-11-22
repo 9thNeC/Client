@@ -1,7 +1,36 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@pages/*": ["pages/*"],
+      "@libs/*": ["shared/libs/*"],
+      "@components/*": ["shared/components/*"],
+      "@apis/*": ["shared/apis/*"],
+      "@layouts/*": ["shared/layouts/*"],
+      "@styles/*": ["shared/styles/*"],
+      "@constants/*": ["shared/constants/*"],
+      "@routes/*": ["shared/routes/*"],
+      "@hooks/*": ["shared/hooks/*"],
+      "@images/*": ["shared/assets/images/*"],
+      "@icons/*": ["shared/assets/icons/*"],
+      "@types/*": ["shared/types/*"],
+      "@utils/*": ["shared/utils/*"],
+      "@mocks/*": ["shared/mocks/*"]
+    }
+  },
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }
