@@ -9,8 +9,8 @@ import { axiosClient } from '@/shared/apis/axios-client';
 
 const RecordPage = () => {
   const location = useLocation();
-  // const state = location.state as { value?: string } | undefined;
-  // const value = state?.value ?? '';
+  const state = location.state as { value?: string } | undefined;
+  const value = state?.value ?? '';
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const urlParams = new URLSearchParams(search);
